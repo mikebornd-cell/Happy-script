@@ -1,4 +1,4 @@
--- Custom UI Library - Fixed Version
+-- Custom UI Library - Fixed (No GuiService.ScreenSize error)
 local CustomUI = {}
 
 -- Settings
@@ -17,9 +17,11 @@ function CustomUI:CreateWindow(title, size)
     ScreenGui.ResetOnSpawn = false
     ScreenGui.Parent = game.CoreGui
     
-    -- Center position calculation
     local defaultSize = size or UDim2.new(0, 550, 0, 450)
-    local screenSize = game:GetService("GuiService").ScreenSize
+    
+    -- Center position using screen size from camera
+    local camera = workspace.CurrentCamera
+    local screenSize = camera.ViewportSize
     local centerX = (screenSize.X / 2) - (defaultSize.X.Offset / 2)
     local centerY = (screenSize.Y / 2) - (defaultSize.Y.Offset / 2)
     
@@ -32,16 +34,6 @@ function CustomUI:CreateWindow(title, size)
     MainFrame.BorderSizePixel = 0
     MainFrame.ClipsDescendants = true
     MainFrame.Parent = ScreenGui
-    
-    -- Add shadow effect
-    local Shadow = Instance.new("Frame")
-    Shadow.Size = UDim2.new(1, 10, 1, 10)
-    Shadow.Position = UDim2.new(0, -5, 0, -5)
-    Shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    Shadow.BackgroundTransparency = 0.5
-    Shadow.BorderSizePixel = 0
-    Shadow.ZIndex = -1
-    Shadow.Parent = MainFrame
     
     -- Title bar (draggable)
     local TitleBar = Instance.new("Frame")
@@ -95,7 +87,7 @@ function CustomUI:CreateWindow(title, size)
     ContentContainer.BorderSizePixel = 0
     ContentContainer.Parent = MainFrame
     
-    -- Resize grip (styled with transparency and rounded corners)
+    -- Resize grip with rounded corners
     local Grip = Instance.new("Frame")
     Grip.Name = "ResizeGrip"
     Grip.Size = UDim2.new(0, 20, 0, 20)
@@ -106,7 +98,7 @@ function CustomUI:CreateWindow(title, size)
     Grip.BorderSizePixel = 0
     Grip.Parent = MainFrame
     
-    -- Rounded corners for grip
+    -- Rounded corners
     local Corner = Instance.new("UICorner")
     Corner.CornerRadius = UDim.new(0, 4)
     Corner.Parent = Grip
@@ -120,19 +112,6 @@ function CustomUI:CreateWindow(title, size)
     Dots.TextSize = 14
     Dots.Font = Enum.Font.SourceSansBold
     Dots.Parent = Grip
-    
-    -- Hover effect for grip
-    Grip.MouseEnter:Connect(function()
-        Grip.BackgroundColor3 = Color3.fromRGB(80, 80, 90)
-        Grip.BackgroundTransparency = 0.2
-    end)
-    
-    Grip.MouseLeave:Connect(function()
-        if not resizing then
-            Grip.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
-            Grip.BackgroundTransparency = 0.3
-        end
-    end)
     
     -- Dragging logic
     local dragging = false
@@ -187,6 +166,21 @@ function CustomUI:CreateWindow(title, size)
     Grip.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             resizing = false
+            Grip.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+            Grip.BackgroundTransparency = 0.3
+        end
+    end)
+    
+    -- Hover effects
+    Grip.MouseEnter:Connect(function()
+        if not resizing then
+            Grip.BackgroundColor3 = Color3.fromRGB(80, 80, 90)
+            Grip.BackgroundTransparency = 0.2
+        end
+    end)
+    
+    Grip.MouseLeave:Connect(function()
+        if not resizing then
             Grip.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
             Grip.BackgroundTransparency = 0.3
         end
@@ -254,7 +248,6 @@ function CustomUI:CreateWindow(title, size)
         function tab:AddButton(text, callback)
             local btn = Instance.new("TextButton")
             btn.Size = UDim2.new(1, -20, 0, 40)
-            btn.Position = UDim2.new(0, 10, 0, 10)
             btn.BackgroundColor3 = Color3.fromRGB(55, 55, 60)
             btn.Text = text
             btn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -355,8 +348,7 @@ function CustomUI:CreateWindow(title, size)
             local function updateSlider(input)
                 local pos = input.Position.X - slider.AbsolutePosition.X
                 local percent = math.clamp(pos / slider.AbsoluteSize.X, 0, 1)
-                local value = min + (max - min) * percent
-                value = math.floor(value)
+                local value = math.floor(min + (max - min) * percent)
                 fill.Size = UDim2.new(percent, 0, 1, 0)
                 valueLabel.Text = tostring(value)
                 callback(value)
