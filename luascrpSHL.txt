@@ -1,0 +1,79 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Window = Rayfield:CreateWindow({Name="HAPPYY Script | discord.gg/Nfm4RCXvU",LoadingTitle="Loading...",LoadingSubtitle="Join discord.gg/Nfm4RCXvU",ConfigurationSaving={Enabled=true,FolderName="HAPPYYScript",FileName="Settings"},Discord={Enabled=true,Invite="Nfm4RCXvU",RememberJoins=true},KeySystem=false})
+local FarmTab = Window:CreateTab("Auto Farm")
+local TeleportTab = Window:CreateTab("Teleports")
+local CombatTab = Window:CreateTab("Combat")
+local CameraTab = Window:CreateTab("Camera Lock")
+local SettingsTab = Window:CreateTab("Settings")
+local player = game.Players.LocalPlayer
+local camera = workspace.CurrentCamera
+local autoLoot = false
+local autoBerry = false
+local infAmmo = false
+local rapidFire = false
+local noRecoil = false
+local speedVal = 16
+local speedOn = false
+local cameraLocked = false
+local smoothness = 0.3
+local cameraLoop = nil
+local infLoop = nil
+local rapidConn = {}
+local recoilConn = {}
+local speedLoop = nil
+local function prompt(obj) for _,v in pairs(obj:GetDescendants()) do if v:IsA("ProximityPrompt") then fireproximityprompt(v) end end end
+function StartLoot() if autoLoot then return end autoLoot=true task.spawn(function() local c=player.Character or player.CharacterAdded:Wait() local r=c:WaitForChild("HumanoidRootPart") while autoLoot do task.wait(0.3) local crates=workspace:FindFirstChild("crates") if crates then for _,cr in pairs(crates:GetChildren()) do if not autoLoot then break end if cr.Name=="crate" then local p=cr:FindFirstChildWhichIsA("BasePart") if p then r.CFrame=p.CFrame+Vector3.new(0,3,0) task.wait(0.2) prompt(cr) end end end end end end) end
+function StopLoot() autoLoot=false end
+function StartBerry() if autoBerry then return end autoBerry=true task.spawn(function() local c=player.Character or player.CharacterAdded:Wait() local r=c:WaitForChild("HumanoidRootPart") while autoBerry do task.wait(0.3) local h=workspace:FindFirstChild("harvest") if h then for _,b in pairs(h:GetChildren()) do if not autoBerry then break end if b.Name=="berry" or b.Name=="Part" then r.CFrame=b:GetPivot()+Vector3.new(0,3,0) task.wait(0.2) prompt(b) break end end end end end) end
+function StopBerry() autoBerry=false end
+FarmTab:CreateToggle({Name="Auto Loot Crate",CurrentValue=false,Flag="Loot",Callback=function(v) if v then StartLoot() else StopLoot() end end})
+FarmTab:CreateToggle({Name="Auto Farm Berry",CurrentValue=false,Flag="Berry",Callback=function(v) if v then StartBerry() else StopBerry() end end})
+function TP(pos) local c=player.Character if c and c:FindFirstChild("HumanoidRootPart") then c.HumanoidRootPart.CFrame=pos Rayfield:Notify({Title="Teleported",Duration=1}) end end
+TeleportTab:CreateButton({Name="Teleport to Shop",Callback=function() local s=workspace:FindFirstChild("shop") if s and s:FindFirstChild("Torso") then TP(s.Torso.CFrame+Vector3.new(0,3,0)) end end})
+TeleportTab:CreateButton({Name="Teleport to Siren Lighthouse",Callback=function() local t=workspace:FindFirstChild("Towers") if t and t:FindFirstChild("Tower") and t.Tower:FindFirstChild("Lever") then local m=t.Tower.Lever:FindFirstChild("Metal1") if m then TP(m.CFrame+Vector3.new(0,3,0)) end end end})
+TeleportTab:CreateButton({Name="Teleport to Military Lighthouse",Callback=function() local t=workspace:FindFirstChild("Towers") if t and t:GetChildren()[2] and t:GetChildren()[2]:FindFirstChild("Lever") then local m=t:GetChildren()[2].Lever:FindFirstChild("Metal1") if m then TP(m.CFrame+Vector3.new(0,3,0)) end end end})
+TeleportTab:CreateButton({Name="Teleport to Barn",Callback=function() local b=workspace:FindFirstChild("barn") if b then local p=b:GetChildren()[78] if p and p:IsA("BasePart") then TP(p.CFrame+Vector3.new(0,3,0)) end end end})
+TeleportTab:CreateButton({Name="Teleport to Giant Tree Top",Callback=function() TP(CFrame.new(43.45,218.95,-22.62)) end})
+TeleportTab:CreateSection("Player Teleport")
+local targetPlayer=""
+TeleportTab:CreateInput({Name="Enter Player Name",PlaceholderText="Type exact player name",Flag="PName",Callback=function(t) targetPlayer=t end})
+TeleportTab:CreateButton({Name="Teleport to Player",Callback=function() if targetPlayer~="" then for _,p in pairs(game.Players:GetPlayers()) do if p.Name==targetPlayer then local tc=p.Character if tc and tc:FindFirstChild("HumanoidRootPart") then TP(tc.HumanoidRootPart.CFrame+Vector3.new(0,3,0)) return end end end Rayfield:Notify({Title="Error",Content="Player not found",Duration=2}) else Rayfield:Notify({Title="Error",Content="Enter a name",Duration=2}) end end})
+function SetInfAmmo() local c=player.Character if not c then return end for _,o in pairs(c:GetDescendants()) do if o:IsA("IntValue") or o:IsA("NumberValue") then local n=string.lower(o.Name or "") if n:find("ammo") or n:find("clip") or n:find("mag") or n:find("bullet") then o.Value=9999 end end end for _,t in pairs(player.Backpack:GetChildren()) do for _,o in pairs(t:GetDescendants()) do if o:IsA("IntValue") or o:IsA("NumberValue") then local n=string.lower(o.Name or "") if n:find("ammo") or n:find("clip") or n:find("mag") or n:find("bullet") then o.Value=9999 end end end end end
+function EnableInfAmmo() if infAmmo then return end infAmmo=true SetInfAmmo() infLoop=game:GetService("RunService").Heartbeat:Connect(function() if infAmmo then SetInfAmmo() end end) Rayfield:Notify({Title="Infinite Ammo",Content="ON",Duration=1}) end
+function DisableInfAmmo() infAmmo=false if infLoop then infLoop:Disconnect() end Rayfield:Notify({Title="Infinite Ammo",Content="OFF",Duration=1}) end
+function ApplyRapid(t) for _,v in pairs(t:GetDescendants()) do if v:IsA("NumberValue") or v:IsA("IntValue") then local n=string.lower(v.Name or "") if n:find("firerate") or n:find("delay") then v.Value=0 end if n:find("rpm") then v.Value=999999 end end end end
+function EnableRapid() if rapidFire then return end rapidFire=true for _,t in pairs(player.Backpack:GetChildren()) do ApplyRapid(t) end for _,t in pairs(player.Character:GetChildren()) do ApplyRapid(t) end rapidConn[1]=player.Backpack.ChildAdded:Connect(ApplyRapid) rapidConn[2]=player.Character.ChildAdded:Connect(ApplyRapid) Rayfield:Notify({Title="Rapid Fire",Content="ON",Duration=1}) end
+function DisableRapid() rapidFire=false for _,c in pairs(rapidConn) do if c then pcall(function() c:Disconnect() end) end end rapidConn={} Rayfield:Notify({Title="Rapid Fire",Content="OFF",Duration=1}) end
+function ApplyNoRecoil(t) for _,v in pairs(t:GetDescendants()) do if v:IsA("NumberValue") or v:IsA("IntValue") then local n=string.lower(v.Name or "") if n:find("recoil") or n:find("kick") then v.Value=0 local conn=v:GetPropertyChangedSignal("Value"):Connect(function() if v.Value~=0 then v.Value=0 end end) table.insert(recoilConn,conn) end end end end
+function EnableNoRecoil() if noRecoil then return end noRecoil=true for _,t in pairs(player.Backpack:GetChildren()) do ApplyNoRecoil(t) end for _,t in pairs(player.Character:GetChildren()) do ApplyNoRecoil(t) end recoilConn[1]=player.Backpack.ChildAdded:Connect(ApplyNoRecoil) recoilConn[2]=player.Character.ChildAdded:Connect(ApplyNoRecoil) Rayfield:Notify({Title="No Recoil",Content="ON",Duration=1}) end
+function DisableNoRecoil() noRecoil=false for _,c in pairs(recoilConn) do if c then pcall(function() c:Disconnect() end) end end recoilConn={} Rayfield:Notify({Title="No Recoil",Content="OFF",Duration=1}) end
+function SetSpeed() local c=player.Character if c and c:FindFirstChild("Humanoid") then c.Humanoid.WalkSpeed=speedVal end Rayfield:Notify({Title="Speed",Content="Set to "..speedVal, Duration=1}) end
+function EnableSpeed() if speedOn then return end speedOn=true speedLoop=game:GetService("RunService").Heartbeat:Connect(function() if speedOn then local c=player.Character if c and c:FindFirstChild("Humanoid") then c.Humanoid.WalkSpeed=speedVal end end end) Rayfield:Notify({Title="Speed Modifier",Content="ON",Duration=1}) end
+function DisableSpeed() speedOn=false if speedLoop then speedLoop:Disconnect() speedLoop=nil end local c=player.Character if c and c:FindFirstChild("Humanoid") then c.Humanoid.WalkSpeed=16 end Rayfield:Notify({Title="Speed Modifier",Content="OFF",Duration=1}) end
+CombatTab:CreateToggle({Name="Infinite Ammo",CurrentValue=false,Flag="InfAmmo",Callback=function(v) if v then EnableInfAmmo() else DisableInfAmmo() end end})
+CombatTab:CreateToggle({Name="Rapid Fire",CurrentValue=false,Flag="RapidFire",Callback=function(v) if v then EnableRapid() else DisableRapid() end end})
+CombatTab:CreateToggle({Name="No Recoil",CurrentValue=false,Flag="NoRecoil",Callback=function(v) if v then EnableNoRecoil() else DisableNoRecoil() end end})
+CombatTab:CreateToggle({Name="Speed Modifier",CurrentValue=false,Flag="SpeedT",Callback=function(v) if v then EnableSpeed() else DisableSpeed() end end})
+CombatTab:CreateSlider({Name="Walk Speed",Range={16,120},Increment=1,CurrentValue=16,Flag="SpeedS",Callback=function(v) speedVal=v if speedOn then SetSpeed() end end})
+function FindTarget(n) if not n then return nil end for _,o in pairs(workspace:GetDescendants()) do if o:IsA("Model") and o.Name==n then if o:FindFirstChild("HumanoidRootPart") or o:FindFirstChild("Head") then return o end end end return nil end
+function LockCameraTo(t) if cameraLocked then if cameraLoop then cameraLoop:Disconnect() end end cameraLocked=true cameraLoop=game:GetService("RunService").RenderStepped:Connect(function() if not cameraLocked then return end local target=FindTarget(t) if target then local part=target:FindFirstChild("HumanoidRootPart") or target:FindFirstChild("Head") if part then camera.CFrame=camera.CFrame:Lerp(CFrame.new(camera.CFrame.Position,part.Position),smoothness) end end end) Rayfield:Notify({Title="Camera Lock",Content="Locked to "..t,Duration=2}) end
+function UnlockCam() cameraLocked=false if cameraLoop then cameraLoop:Disconnect() cameraLoop=nil end Rayfield:Notify({Title="Camera Lock",Content="Unlocked",Duration=2}) end
+function LockNearest() local c=player.Character if not c then return end local r=c:FindFirstChild("HumanoidRootPart") if not r then return end local nearest,shortest=nil,math.huge for _,o in pairs(workspace:GetDescendants()) do if o:IsA("Model") and o~=c then local p=o:FindFirstChild("HumanoidRootPart") or o:FindFirstChild("Head") if p then local d=(r.Position-p.Position).Magnitude if d<shortest and d<150 then shortest=d nearest=o end end end end if nearest then LockCameraTo(nearest.Name) else Rayfield:Notify({Title="Camera Lock",Content="No enemies nearby",Duration=2}) end end
+CameraTab:CreateSection("Target Lock")
+CameraTab:CreateButton({Name="Lock to Nearest Enemy",Callback=LockNearest})
+CameraTab:CreateButton({Name="Unlock Camera",Callback=UnlockCam})
+CameraTab:CreateSection("Quick Presets")
+CameraTab:CreateButton({Name="Lock to real_siren",Callback=function() LockCameraTo("real_siren") end})
+CameraTab:CreateButton({Name="Lock to siren",Callback=function() LockCameraTo("siren") end})
+CameraTab:CreateButton({Name="Lock to real_cartoon_cat",Callback=function() LockCameraTo("real_cartoon_cat") end})
+CameraTab:CreateButton({Name="Lock to cartoon_cat",Callback=function() LockCameraTo("cartoon_cat") end})
+CameraTab:CreateSection("Settings")
+CameraTab:CreateSlider({Name="Camera Smoothness",Range={0.1,0.9},Increment=0.05,CurrentValue=0.3,Flag="Smoothness",Callback=function(v) smoothness=v end})
+SettingsTab:CreateKeybind({Name="Toggle UI",CurrentKeybind="RightShift",HoldToInteract=false,Flag="UIKeybind",Callback=function() Rayfield:Toggle() end})
+SettingsTab:CreateKeybind({Name="Toggle Auto Loot",CurrentKeybind="C",HoldToInteract=false,Flag="LootKeybind",Callback=function() local v=Rayfield:GetToggleFlagValue("Loot") Rayfield:SetToggleFlagValue("Loot",not v) end})
+SettingsTab:CreateKeybind({Name="Toggle Auto Berry",CurrentKeybind="B",HoldToInteract=false,Flag="BerryKeybind",Callback=function() local v=Rayfield:GetToggleFlagValue("Berry") Rayfield:SetToggleFlagValue("Berry",not v) end})
+SettingsTab:CreateKeybind({Name="Toggle Speed",CurrentKeybind="X",HoldToInteract=false,Flag="SpeedKeybind",Callback=function() local v=Rayfield:GetToggleFlagValue("SpeedT") Rayfield:SetToggleFlagValue("SpeedT",not v) end})
+SettingsTab:CreateKeybind({Name="Lock to Nearest Enemy",CurrentKeybind="L",HoldToInteract=false,Flag="NearestKeybind",Callback=LockNearest})
+SettingsTab:CreateKeybind({Name="Unlock Camera",CurrentKeybind="U",HoldToInteract=false,Flag="UnlockKeybind",Callback=UnlockCam})
+SettingsTab:CreateButton({Name="Join Discord",Callback=function() setclipboard("https://discord.gg/Nfm4RCXvU") Rayfield:Notify({Title="Discord Link Copied!",Content="Join discord.gg/Nfm4RCXvU",Duration=3}) end})
+Rayfield:Notify({Title="Script Loaded",Content="All Features Working | X=Speed | L=Lock | U=Unlock",Duration=4})
