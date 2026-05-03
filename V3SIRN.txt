@@ -1,0 +1,116 @@
+                                                                                 local Rayfield=       
+                                                                        loadstring(game:HttpGet(                        
+                                                                    "https://sirius.menu/rayfield"))();local Window=Rayfield:     
+                                                                CreateWindow({Name="HAPPYY Complete Script",LoadingTitle=               
+                                                            "HAPPYY Complete Script",LoadingSubtitle="Auto Farm | Teleports | Combat",    
+                                                          ConfigurationSaving={Enabled=true,FolderName="HAPPYYScript",FileName="Settings"}, 
+                                                        Discord={Enabled=false},KeySystem=false});local FarmTab=Window:CreateTab("Auto Farm", 
+                                                      nil);local TeleportTab=Window:CreateTab("Teleports",nil);local CombatTab=Window:CreateTab 
+                                                    ("Combat",nil);local SettingsTab=Window:CreateTab("Settings",nil);local player=game.Players.  
+                                                  LocalPlayer;local autoLoot=false;local autoBerry=false;local TweenService=game:GetService(        
+                                                  "TweenService");local camera=workspace.CurrentCamera;local function triggerPrompt(obj) for _,v in   
+                                                pairs(obj:GetDescendants()) do if v:IsA("ProximityPrompt") then fireproximityprompt(v);end end end      
+                                                function StartAutoLoot() if autoLoot then return;end autoLoot=true;task.spawn(function() local char=      
+                                              player.Character or player.CharacterAdded:Wait() ;local root=char:WaitForChild("HumanoidRootPart");while      
+                                              autoLoot do task.wait(0.2);local cratesFolder=workspace:FindFirstChild("crates");if cratesFolder then for _,  
+                                            crate in pairs(cratesFolder:GetChildren()) do if  not autoLoot then break;end if (crate.Name=="crate") then local 
+                                             part=crate:FindFirstChildWhichIsA("BasePart");if part then local tween=TweenService:Create(root,TweenInfo.new(0.3, 
+                                          Enum.EasingStyle.Linear,Enum.EasingDirection.Out),{CFrame=part.CFrame + Vector3.new(0,3,0) });tween:Play();tween.       
+                                          Completed:Wait();task.wait(0.2);triggerPrompt(crate);end end end end for _,obj in pairs(workspace:GetDescendants()) do if 
+                                            not autoLoot then break;end if ((obj.Name=="crate_stomp") and obj:IsA("BasePart")) then local tween=TweenService:Create(  
+                                          root,TweenInfo.new(0.3,Enum.EasingStyle.Linear,Enum.EasingDirection.Out),{CFrame=obj.CFrame + Vector3.new(0,3,0) });tween:  
+                                        Play();tween.Completed:Wait();task.wait(0.2);triggerPrompt(obj);end end task.wait(0.2);end end);end function StopAutoLoot()     
+                                        autoLoot=false;end function StartAutoBerry() if autoBerry then return --[[==============================]];end autoBerry=true;    
+                                        task.spawn(function() local char=player.Character or player --[[============================================]].CharacterAdded:    
+                                        Wait() ;local root=char:WaitForChild("HumanoidRootPart" --[[======================================================]]);while         
+                                      autoBerry do task.wait(0.1);local nearest=nil;local   --[[==========================================================]]dist=math.huge;   
+                                      local harvestFolder=workspace:FindFirstChild(       --[[==============================================================]]"harvest");if   
+                                      harvestFolder then for _,berry in pairs(            --[[================================================================]]harvestFolder:  
+                                      GetChildren()) do if ((berry.Name=="berry") or (    --[[==================================================================]]berry.Name==  
+                                      "Part")) then local pos=berry:GetPivot().Position;  --[[==================================================================]]local d=(root.    
+                                    Position-pos).Magnitude;if (d<dist) then dist=d;      --[[====================================================================]]nearest=berry 
+                    ;end end end end local abandonedHouse=workspace:FindFirstChild(       --[[====================================================================]]                
+              "Abandoned House");if abandonedHouse then local plants=abandonedHouse:      --[[======================================================================]]              
+            FindFirstChild("Plants");if plants then for _,berry in pairs(plants:          --[[======================================================================]]GetChildren() 
+          ) do if ((berry.Name=="Bush") or (berry.Name=="Plant1")) then local pos=berry:  --[[======================================================================]]GetPivot().   
+        Position;local d=(root.Position-pos).Magnitude;if (d<dist) then dist=d;nearest=   --[[======================================================================]]berry;end end 
+         end end end if nearest then local tween=TweenService:Create(root,TweenInfo.new(  --[[======================================================================]]0.3,Enum.     
+      EasingStyle.Linear,Enum.EasingDirection.Out),{CFrame=nearest:GetPivot() + Vector3.  --[[======================================================================]]new(0,3,0) }) 
+      ;tween:Play();tween.Completed:Wait();local startTime=tick();while nearest.Parent and  --[[==================================================================]]autoBerry  do   
+      triggerPrompt(nearest);task.wait(0.05);if ((tick() -startTime)>3) then break;end end  --[[================================================================]]end task.wait(0.2 
+    );end end);end function StopAutoBerry() autoBerry=false;end function TeleportToShop()   --[[==============================================================]]local char=player 
+    .Character or player.CharacterAdded:Wait() ;local root=char:WaitForChild(                 --[[==========================================================]]"HumanoidRootPart") 
+    ;local shop=workspace:FindFirstChild("shop");if shop then local shopTorso=shop:             --[[====================================================]]FindFirstChild("Torso") 
+    ;if (shopTorso and shopTorso:IsA("BasePart")) then root.CFrame=shopTorso.CFrame + Vector3.new --[[==============================================]](0,3,0) ;Rayfield:Notify( 
+    {Title="Teleport",Content="Teleported to Shop!",Duration=2});end end end function                 --[[====================================]]TeleportToSirenLighthouse()   
+    local char=player.Character or player.CharacterAdded:Wait() ;local root=char:WaitForChild(            --[[========================]]"HumanoidRootPart");local towers=     
+    workspace:FindFirstChild("Towers");if towers then local tower=towers:FindFirstChild("Tower");if tower then local lever=tower:FindFirstChild("Lever");if lever then      
+  local targetPart=lever:FindFirstChild("Metal1");if (targetPart and targetPart:IsA("BasePart")) then root.CFrame=targetPart.CFrame + Vector3.new(0,3,0) ;Rayfield:Notify 
+  ({Title="Teleport",Content="Teleported to Siren Lighthouse!",Duration=2});end end end end end function TeleportToMilitaryLighthouse() local char=player.Character or  
+  player.CharacterAdded:Wait() ;local root=char:WaitForChild("HumanoidRootPart");local towers=workspace:FindFirstChild("Towers");if towers then local tower=towers:       
+  GetChildren()[2];if tower then local lever=tower:FindFirstChild("Lever");if lever then local metal1=lever:FindFirstChild("Metal1");if (metal1 and metal1:IsA("BasePart" 
+  )) then root.CFrame=metal1.CFrame + Vector3.new(0,3,0) ;Rayfield:Notify({Title="Teleport",Content="Teleported to Military Lighthouse!",Duration=2});end end end end end 
+   function TeleportToBarn() local char=player.Character or player.CharacterAdded:Wait() ;local root=char:WaitForChild("HumanoidRootPart");local barn=workspace:          
+  FindFirstChild("barn");if barn then local barnParts=barn:GetChildren();local targetPart=barnParts[78];if (targetPart and targetPart:IsA("BasePart")) then root.CFrame=  
+  targetPart.CFrame + Vector3.new(0,3,0) ;Rayfield:Notify({Title="Teleport",Content="Teleported to Barn!",Duration=2});end end end local lockTarget=nil;local locked=     
+  false;local cameraLoop=nil;function LockCameraTo(targetName) if locked then return;end locked=true;cameraLoop=task.spawn(function() while locked do task.wait(0.05);    
+  local scps=workspace:FindFirstChild("scps");if scps then local target=scps:FindFirstChild(targetName);if (target and target:FindFirstChild("HumanoidRootPart")) then    
+  camera.CFrame=CFrame.new(camera.CFrame.Position,target.HumanoidRootPart.Position);end end end end);Rayfield:Notify({Title="Camera Lock",Content="Locked to: "   ..      
+  targetName ,Duration=2});end function UnlockCamera() locked=false;if cameraLoop then task.cancel(cameraLoop);cameraLoop=nil;end Rayfield:Notify({Title="Camera Lock",     
+  Content="Camera unlocked!",Duration=2});end local rapidFireEnabled=false;local rapidFireConnections={};function applyRapidFire(tool) if  not tool:IsA("Tool") then return 
+  ;end for _,v in pairs(tool:GetDescendants()) do if (v:IsA("IntValue") or v:IsA("NumberValue")) then local name=v.Name:lower();if (name:find("firerate") or name:find(     
+  "delay")) then v.Value=0;end if name:find("rpm") then v.Value=1000000;end end end end function EnableRapidFire() if rapidFireEnabled then return;end rapidFireEnabled=    
+  true;for _,t in pairs(player.Backpack:GetChildren()) do applyRapidFire(t);end for _,t in pairs(player.Character:GetChildren()) do applyRapidFire(t);end table.insert(     
+  rapidFireConnections,player.Backpack.ChildAdded:Connect(applyRapidFire));table.insert(rapidFireConnections,player.Character.ChildAdded:Connect(applyRapidFire));Rayfield: 
+  Notify({Title="Rapid Fire",Content="ENABLED!",Duration=2});end function DisableRapidFire() rapidFireEnabled=false;for _,c in pairs(rapidFireConnections) do if c then c:  
+  Disconnect();end end table.clear(rapidFireConnections);Rayfield:Notify({Title="Rapid Fire",Content="DISABLED!",Duration=2});end local noRecoilEnabled=false;local         
+  noRecoilConnections={};function applyNoRecoil(tool) if  not tool:IsA("Tool") then return;end for _,v in pairs(tool:GetDescendants()) do if (v:IsA("NumberValue") or v:IsA 
+  ("IntValue")) then local name=v.Name:lower();if (name:find("recoil") or name:find("kick")) then v.Value=0;local conn=v:GetPropertyChangedSignal("Value"):Connect(function 
+  () if (v.Value~=0) then v.Value=0;end end);table.insert(noRecoilConnections,conn);end end end end function EnableNoRecoil() if noRecoilEnabled then return;end            
+  noRecoilEnabled=true;for _,t in pairs(player.Backpack:GetChildren()) do applyNoRecoil(t);end for _,t in pairs(player.Character:GetChildren()) do applyNoRecoil(t);end     
+  table.insert(noRecoilConnections,player.Backpack.ChildAdded:Connect(applyNoRecoil));table.insert(noRecoilConnections,player.Character.ChildAdded:Connect(applyNoRecoil)); 
+  Rayfield:Notify({Title="No Recoil",Content="ENABLED!",Duration=2});end function DisableNoRecoil() noRecoilEnabled=false;for _,c in pairs(noRecoilConnections) do if c   
+  then c:Disconnect();end end table.clear(noRecoilConnections);Rayfield:Notify({Title="No Recoil",Content="DISABLED!",Duration=2});end local infAmmoEnabled=false;local   
+  infAmmoLoop=nil;function SetInfiniteAmmo() local char=player.Character;if  not char then return;end local allObjects={};for _,obj in pairs(char:GetChildren()) do table 
+    .insert(allObjects,obj);end for _,tool in pairs(player.Backpack:GetChildren()) do table.insert(allObjects,tool);end for _,obj in pairs(allObjects) do for _,          
+    descendant in pairs(obj:GetDescendants()) do if (descendant:IsA("IntValue") or descendant:IsA("NumberValue")) then local name=string.lower(descendant.Name);if (name: 
+    find("ammo") or name:find("clip") or name:find("mag") or name:find("bullet") or name:find("reserve") or name:find("ammunition") or name:find("round") or name:find(   
+    "cartridge")) then if (descendant.Value<9999) then descendant.Value=9999;end end end end end end function EnableInfiniteAmmo() if infAmmoEnabled then return;end      
+      infAmmoEnabled=true;SetInfiniteAmmo();infAmmoLoop=game:GetService("RunService").Heartbeat:Connect(function() if infAmmoEnabled then SetInfiniteAmmo();end end);   
+      Rayfield:Notify({Title="Infinite Ammo",Content="ENABLED! Ammo will stay at 9999",Duration=3});print("Infinite Ammo Enabled - Scanning for ammo values");end       
+      function DisableInfiniteAmmo() infAmmoEnabled=false;if infAmmoLoop then infAmmoLoop:Disconnect();infAmmoLoop=nil;end Rayfield:Notify({Title="Infinite Ammo",      
+        Content="DISABLED!",Duration=2});print("Infinite Ammo Disabled");end FarmTab:CreateToggle({Name="Auto Loot Crate",CurrentValue=false,Flag="AutoLoot",Callback=  
+        function(Value) if Value then StartAutoLoot();else StopAutoLoot();end end});FarmTab:CreateToggle({Name="Auto Farm Berry",CurrentValue=false,Flag="AutoBerry",   
+        Callback=function(Value) if Value then StartAutoBerry();else StopAutoBerry();end end});local TeleportSection=TeleportTab:CreateSection("Teleport Locations");   
+          TeleportTab:CreateButton({Name="Teleport to Shop",Callback=TeleportToShop});TeleportTab:CreateButton({Name="Teleport to Siren Lighthouse",Callback=         
+            TeleportToSirenLighthouse});TeleportTab:CreateButton({Name="Teleport to Military Lighthouse",Callback=TeleportToMilitaryLighthouse});TeleportTab:         
+              CreateButton({Name="Teleport to Barn",Callback=TeleportToBarn});local CameraSection=CombatTab:CreateSection("Camera Locks");local cameraDrop=CombatTab: 
+                CreateDropdown({Name="Select Target",Options={"real_siren","siren","real_cartoon_cat","cartoon_cat"},CurrentOption="real_siren",Flag="CameraTarget",  
+                  Callback=function(Option) end});CombatTab:CreateButton({Name="Lock Camera to Target",Callback=function() local target=Rayfield:GetFlagValue(      
+                      "CameraTarget");LockCameraTo(target);end});CombatTab:CreateButton({Name="Unlock Camera",Callback=UnlockCamera});local RapidFireSection=       
+                                  CombatTab:CreateSection("Weapon Mods");CombatTab:CreateToggle({Name="Rapid Fire",CurrentValue=false,Flag="RapidFire",Callback=    
+                                      function(Value) if Value then EnableRapidFire();else DisableRapidFire();end end});CombatTab:CreateToggle({Name="No Recoil",   
+                                      CurrentValue=false,Flag="NoRecoil",Callback=function(Value)           if Value then EnableNoRecoil();else DisableNoRecoil();  
+                                      end end});CombatTab:CreateToggle({Name="Infinite Ammo",               CurrentValue=false,Flag="InfiniteAmmo",Callback=      
+                                      function(Value) if Value then EnableInfiniteAmmo();else               DisableInfiniteAmmo();end end});SettingsTab:          
+                                      CreateKeybind({Name="Toggle UI",CurrentKeybind="RightShift",          HoldToInteract=false,Flag="UIKeybind",Callback=       
+                                      function() Rayfield:Toggle();end});SettingsTab:CreateKeybind(           {Name="Toggle Auto Loot",CurrentKeybind="C",        
+                                      HoldToInteract=false,Flag="LootKeybind",Callback=function()             local current=Rayfield:GetToggleFlagValue(          
+                                      "AutoLoot");Rayfield:SetToggleFlagValue("AutoLoot", not                 current);end});SettingsTab:CreateKeybind({Name=   
+                                        "Toggle Auto Berry",CurrentKeybind="B",HoldToInteract=false           ,Flag="BerryKeybind",Callback=function() local    
+                                        current=Rayfield:GetToggleFlagValue("AutoBerry");Rayfield:              SetToggleFlagValue("AutoBerry", not current);   
+                                        end});Rayfield:Notify({Title=" Complete Script Loaded!",                Content=                                      
+                                        "Auto Farm | Teleports | Combat\nAll features ready!",                  Duration=5});print(                           
+                                        "=== HAPPYY COMPLETE SCRIPT LOADED ===");print(                           "✓ Auto Farm: Crates & Berries");print(   
+                                        "✓ Teleports: Shop, Lighthouses, Barn");print(                                                                      
+                                                                                                                                                          
+                                                                                                                                                      
+                                                                                                                                                  
+                                                                                                                                          
+                                                                                            
+                                                                                          
+                                                                                        
+                                                                                  
+
+
+"✓ Combat: Camera Locks, Rapid Fire, No Recoil, Infinite Ammo");print("Press RightShift to toggle UI");
