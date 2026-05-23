@@ -30,8 +30,8 @@ UI.ResetOnSpawn = false
 
 local MainFrame = Instance.new("Frame", UI)
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 650, 0, 475)
-MainFrame.Position = UDim2.new(0.5, -280, 0.4, -175)
+MainFrame.Size = UDim2.new(0, 520, 0, 320)
+MainFrame.Position = UDim2.new(0.5, -260, 0.4, -160)
 MainFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 28)
 MainFrame.Active = true
 MainFrame.Draggable = true
@@ -74,29 +74,29 @@ MinBtn.TextSize = 25
 
 -- [[ TABS SYSTEM ]]
 local SideBar = Instance.new("Frame", MainFrame)
-SideBar.Size = UDim2.new(0, 140, 0, 305)
-SideBar.Position = UDim2.new(0, 0, 0, 40)
+SideBar.Size = UDim2.new(0, 130, 0, 278)
+SideBar.Position = UDim2.new(0, 0, 0, 42)
 SideBar.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
 Instance.new("UIListLayout", SideBar).Padding = UDim.new(0, 8)
 Instance.new("UIPadding", SideBar).PaddingTop = UDim.new(0, 10)
 
 local CombatFrame = Instance.new("Frame", MainFrame)
-CombatFrame.Size = UDim2.new(0, 290, 0, 305)
-CombatFrame.Position = UDim2.new(0, 100, 0, 50)
+CombatFrame.Size = UDim2.new(0, 390, 0, 278)
+CombatFrame.Position = UDim2.new(0, 130, 0, 42)
 CombatFrame.BackgroundTransparency = 1
 
 local MoveFrame = Instance.new("Frame", MainFrame)
-MoveFrame.Size = UDim2.new(0, 290, 0, 305)
-MoveFrame.Position = UDim2.new(0, 100, 0, 50)
+MoveFrame.Size = UDim2.new(0, 390, 0, 278)
+MoveFrame.Position = UDim2.new(0, 130, 0, 42)
 MoveFrame.BackgroundTransparency = 1
 MoveFrame.Visible = false
 
 local TeleFrame = Instance.new("ScrollingFrame", MainFrame)
-TeleFrame.Size = UDim2.new(0, 290, 0, 305)
-TeleFrame.Position = UDim2.new(0, 100, 0, 50)
+TeleFrame.Size = UDim2.new(0, 390, 0, 278)
+TeleFrame.Position = UDim2.new(0, 130, 0, 42)
 TeleFrame.BackgroundTransparency = 1
 TeleFrame.Visible = false
-TeleFrame.CanvasSize = UDim2.new(0, 0, 0, 400)
+TeleFrame.CanvasSize = UDim2.new(0, 0, 0, 360)
 
 local function CreateTab(name, frame)
     local btn = Instance.new("TextButton", SideBar)
