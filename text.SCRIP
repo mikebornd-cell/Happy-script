@@ -74,26 +74,26 @@ MinBtn.TextSize = 25
 
 -- [[ TABS SYSTEM ]]
 local SideBar = Instance.new("Frame", MainFrame)
-SideBar.Size = UDim2.new(0, 140, 0, 700)
+SideBar.Size = UDim2.new(0, 140, 0, 305)
 SideBar.Position = UDim2.new(0, 0, 0, 40)
 SideBar.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
 Instance.new("UIListLayout", SideBar).Padding = UDim.new(0, 8)
 Instance.new("UIPadding", SideBar).PaddingTop = UDim.new(0, 10)
 
 local CombatFrame = Instance.new("Frame", MainFrame)
-CombatFrame.Size = UDim2.new(0, 350, 0, 305)
-CombatFrame.Position = UDim2.new(0, 110, 0, 50)
+CombatFrame.Size = UDim2.new(0, 290, 0, 305)
+CombatFrame.Position = UDim2.new(0, 140, 0, 50)
 CombatFrame.BackgroundTransparency = 1
 
 local MoveFrame = Instance.new("Frame", MainFrame)
-MoveFrame.Size = UDim2.new(0, 350, 0, 305)
-MoveFrame.Position = UDim2.new(0, 110, 0, 50)
+MoveFrame.Size = UDim2.new(0, 290, 0, 305)
+MoveFrame.Position = UDim2.new(0, 140, 0, 50)
 MoveFrame.BackgroundTransparency = 1
 MoveFrame.Visible = false
 
 local TeleFrame = Instance.new("ScrollingFrame", MainFrame)
-TeleFrame.Size = UDim2.new(0, 350, 0, 305)
-TeleFrame.Position = UDim2.new(0, 110, 0, 50)
+TeleFrame.Size = UDim2.new(0, 290, 0, 305)
+TeleFrame.Position = UDim2.new(0, 140, 0, 50)
 TeleFrame.BackgroundTransparency = 1
 TeleFrame.Visible = false
 TeleFrame.CanvasSize = UDim2.new(0, 0, 0, 400)
