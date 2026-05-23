@@ -30,7 +30,7 @@ UI.ResetOnSpawn = false
 
 local MainFrame = Instance.new("Frame", UI)
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 600, 0, 475)
+MainFrame.Size = UDim2.new(0, 650, 0, 475)
 MainFrame.Position = UDim2.new(0.5, -280, 0.4, -175)
 MainFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 28)
 MainFrame.Active = true
