@@ -1,0 +1,163 @@
+-- [[ HAPPYY SCRIPT V9.6 - READABLE & EASY TO ADJUST ]]
+
+local Player = game:GetService("Players").LocalPlayer
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+
+if game:GetService("CoreGui"):FindFirstChild("HappyyScriptCustomUI") then
+    game:GetService("CoreGui").HappyyScriptCustomUI:Destroy()
+end
+
+-- [[ GLOBAL SETTINGS ]]
+_G.HitboxToggle = false
+_G.HitboxValue = 20
+_G.KillAura = false
+_G.SpeedToggle = false
+_G.SpeedValue = 65
+_G.Noclip = false
+_G.InfJump = false
+_G.DetectionDistance = 60
+_G.BehindDistance = 3.5
+local ActiveTarget = nil
+
+-- [[ UI SETUP ]]
+local UI = Instance.new("ScreenGui", game:GetService("CoreGui"))
+UI.Name = "HappyyScriptCustomUI"
+UI.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", UI)
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 585, 0, 375)
+MainFrame.Position = UDim2.new(0.5, -280, 0.4, -175)
+MainFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 28)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.ClipsDescendants = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 14)
+
+-- [[ HEADER ]]
+local HeaderLabel = Instance.new("TextLabel", MainFrame)
+HeaderLabel.Size = UDim2.new(1, 0, 0, 45)
+HeaderLabel.BackgroundColor3 = Color3.fromRGB(32, 32, 38)
+HeaderLabel.Text = "      HAPPYY SCRIPT  |  Bossing V9.6"
+HeaderLabel.TextColor3 = Color3.fromRGB(240, 240, 245)
+HeaderLabel.TextXAlignment = Enum.TextXAlignment.Left
+HeaderLabel.Font = Enum.Font.GothamBold
+HeaderLabel.TextSize = 16
+
+local Logo = Instance.new("ImageLabel", HeaderLabel)
+Logo.Size = UDim2.new(0, 28, 0, 28)
+Logo.Position = UDim2.new(0, 8, 0, 8)
+Logo.BackgroundTransparency = 1
+Logo.Image = "rbxassetid://10142802706"
+
+local CloseBtn = Instance.new("TextButton", HeaderLabel)
+CloseBtn.Size = UDim2.new(0, 45, 0, 45)
+CloseBtn.Position = UDim2.new(1, -45, 0, 0)
+CloseBtn.BackgroundTransparency = 1
+CloseBtn.Text = "X"
+CloseBtn.TextColor3 = Color3.fromRGB(180, 70, 70)
+CloseBtn.Font = Enum.Font.SourceSansBold
+CloseBtn.TextSize = 22
+
+local MinBtn = Instance.new("TextButton", HeaderLabel)
+MinBtn.Size = UDim2.new(0, 45, 0, 45)
+MinBtn.Position = UDim2.new(1, -90, 0, 0)
+MinBtn.BackgroundTransparency = 1
+MinBtn.Text = "-"
+MinBtn.TextColor3 = Color3.fromRGB(160, 160, 170)
+MinBtn.Font = Enum.Font.SourceSansBold
+MinBtn.TextSize = 25
+
+-- [[ TABS SYSTEM ]]
+local SideBar = Instance.new("Frame", MainFrame)
+SideBar.Size = UDim2.new(0, 140, 0, 305)
+SideBar.Position = UDim2.new(0, 0, 0, 40)
+SideBar.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
+Instance.new("UIListLayout", SideBar).Padding = UDim.new(0, 8)
+Instance.new("UIPadding", SideBar).PaddingTop = UDim.new(0, 10)
+
+local CombatFrame = Instance.new("Frame", MainFrame)
+CombatFrame.Size = UDim2.new(0, 350, 0, 305)
+CombatFrame.Position = UDim2.new(0, 110, 0, 50)
+CombatFrame.BackgroundTransparency = 1
+
+local MoveFrame = Instance.new("Frame", MainFrame)
+MoveFrame.Size = UDim2.new(0, 350, 0, 305)
+MoveFrame.Position = UDim2.new(0, 110, 0, 50)
+MoveFrame.BackgroundTransparency = 1
+MoveFrame.Visible = false
+
+local TeleFrame = Instance.new("ScrollingFrame", MainFrame)
+TeleFrame.Size = UDim2.new(0, 350, 0, 305)
+TeleFrame.Position = UDim2.new(0, 110, 0, 50)
+TeleFrame.BackgroundTransparency = 1
+TeleFrame.Visible = false
+TeleFrame.CanvasSize = UDim2.new(0, 0, 0, 400)
+
+local function CreateTab(name, frame)
+    local btn = Instance.new("TextButton", SideBar)
+    btn.Size = UDim2.new(1, -16, 0, 40)
+    btn.BackgroundColor3 = Color3.fromRGB(24, 24, 28)
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(140, 140, 150)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 13
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    
+    btn.MouseButton1Click:Connect(function()
+        CombatFrame.Visible = false
+        MoveFrame.Visible = false
+        TeleFrame.Visible = false
+        frame.Visible = true
+    end)
+end
+
+CreateTab("⚔️ Combat", CombatFrame)
+CreateTab("⚡ Movement", MoveFrame)
+CreateTab("🗺️ Teleport", TeleFrame)
+
+-- [[ CORE LOGIC & ENGINE ]]
+RunService.Heartbeat:Connect(function()
+    if _G.KillAura and ActiveTarget and ActiveTarget:FindFirstChild("HumanoidRootPart") and C:FindFirstChild("HumanoidRootPart") then
+        local myHRP = C.HumanoidRootPart
+        myHRP.CFrame = ActiveTarget.HumanoidRootPart.CFrame * CFrame.new(0, 0, _G.BehindDistance)
+        myHRP.Velocity = Vector3.new(0, 0, 0)
+    end
+end)
+
+UIS.JumpRequest:Connect(function()
+    if _G.InfJump and H then H:ChangeState(Enum.HumanoidStateType.Jumping) end
+end)
+
+-- [[ UI CONTROLS FUNCTIONS (Dito ka mag-adjust ng position) ]]
+local function AddToggle(name, pos, parent, callback)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(0, 380, 0, 45)
+    btn.Position = pos
+    btn.BackgroundColor3 = Color3.fromRGB(38, 38, 44)
+    btn.Text = "  " .. name .. " : [ OFF ]"
+    btn.TextColor3 = Color3.fromRGB(180, 180, 190)
+    btn.Font = Enum.Font.GothamSemibold
+    btn.TextSize = 14
+    btn.TextXAlignment = Enum.TextXAlignment.Left
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 7)
+    
+    local active = false
+    btn.MouseButton1Click:Connect(function()
+        active = not active
+        btn.Text = "  " .. name .. (active and " : [ ON ]" or " : [ OFF ]")
+        btn.BackgroundColor3 = active and Color3.fromRGB(46, 139, 87) or Color3.fromRGB(38, 38, 44)
+        callback(active)
+    end)
+end
+
+-- Add more UI elements here...
+AddToggle("Auto Kill", UDim2.new(0, 20, 0, 20), CombatFrame, function(v) _G.KillAura = v end)
+-- (Pwedeng mo nang dagdagan ang iba gamit ang format na ito)
+
+task.wait(0.2)
+MF.Visible = true
