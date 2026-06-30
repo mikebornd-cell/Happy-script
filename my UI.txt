@@ -1,0 +1,240 @@
+-- Modified Venyx UI Library with Mobile Dragging + Collapse (-) + Close (X) Top Bar Buttons
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+
+-- services
+local input = game:GetService("UserInputService")
+local run = game:GetService("RunService")
+local tween = game:GetService("TweenService")
+local tweeninfo = TweenInfo.new
+
+-- additional
+local utility = {}
+
+-- themes
+local objects = {}
+local themes = {
+    Background = Color3.fromRGB(24, 24, 24), 
+    Glow = Color3.fromRGB(0, 0, 0), 
+    Accent = Color3.fromRGB(10, 10, 10), 
+    LightContrast = Color3.fromRGB(20, 20, 20), 
+    DarkContrast = Color3.fromRGB(14, 14, 14),  
+    TextColor = Color3.fromRGB(255, 255, 255)
+}
+
+do
+    function utility:Create(instance, properties, children)
+        local object = Instance.new(instance)
+        
+        for i, v in pairs(properties or {}) do
+            object[i] = v
+            
+            if typeof(v) == "Color3" then
+                local theme = utility:Find(themes, v)
+                
+                if theme then
+                    objects[theme] = objects[theme] or {}
+                    objects[theme][i] = objects[theme][i] or setmetatable({}, {_mode = "k"})
+                    
+                    table.insert(objects[theme][i], object)
+                end
+            end
+        end
+        
+        for i, module in pairs(children or {}) do
+            module.Parent = object
+        end
+        
+        return object
+    end
+    
+    function utility:Tween(instance, properties, duration, ...)
+        tween:Create(instance, tweeninfo(duration, ...), properties):Play()
+    end
+    
+    function utility:Wait()
+        run.RenderStepped:Wait()
+        return true
+    end
+    
+    function utility:Find(table, value)
+        for i, v in  pairs(table) do
+            if v == value then
+                return i
+            end
+        end
+    end
+    
+    -- MOBILE + PC Dragging Implementation
+    function utility:DraggingEnabled(frame, parent)
+        parent = parent or frame
+        local dragging = false
+        local dragInput, mousePos, framePos
+
+        frame.InputBegan:Connect(function(inputObj)
+            if inputObj.UserInputType == Enum.UserInputType.MouseButton1 or inputObj.UserInputType == Enum.UserInputType.Touch then
+                dragging = true
+                mousePos = inputObj.Position
+                framePos = parent.Position
+                
+                inputObj.Changed:Connect(function()
+                    if inputObj.UserInputState == Enum.UserInputState.End then
+                        dragging = false
+                    end
+                end)
+            end
+        end)
+
+        frame.InputChanged:Connect(function(inputObj)
+            if inputObj.UserInputType == Enum.UserInputType.MouseMovement or inputObj.UserInputType == Enum.UserInputType.Touch then
+                dragInput = inputObj
+            end
+        end)
+
+        input.InputChanged:Connect(function(inputObj)
+            if inputObj == dragInput and dragging then
+                local delta = inputObj.Position - mousePos
+                parent.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+            end
+        end)
+    end
+    
+    function utility:InitializeKeybind()
+        self.keybinds = {}
+        self.ended = {}
+        
+        input.InputBegan:Connect(function(key)
+            if self.keybinds[key.KeyCode] then
+                for i, bind in pairs(self.keybinds[key.KeyCode]) do
+                    bind()
+                end
+            end
+        end)
+    end
+end
+
+-- library wrapper
+local library = {}
+library.__index = library
+
+function library.new(title)
+    local container = utility:Create("ScreenGui", {
+        Name = title,
+        Parent = game:GetService("CoreGui"):FindFirstChild("RobloxGui") or player:WaitForChild("PlayerGui")
+    })
+
+    local Main = utility:Create("ImageLabel", {
+        Name = "Main",
+        Parent = container,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0.5, -255, 0.4, -214),
+        Size = UDim2.new(0, 511, 0, 428),
+        Image = "rbxassetid://4641149554",
+        ImageColor3 = themes.Background,
+        ScaleType = Enum.ScaleType.Slice,
+        SliceCenter = Rect.new(4, 4, 296, 296)
+    })
+
+    local Glow = utility:Create("ImageLabel", {
+        Name = "Glow",
+        Parent = Main,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, -15, 0, -15),
+        Size = UDim2.new(1, 30, 1, 30),
+        ZIndex = 0,
+        Image = "rbxassetid://5028857084",
+        ImageColor3 = themes.Glow,
+        ScaleType = Enum.ScaleType.Slice,
+        SliceCenter = Rect.new(24, 24, 276, 276)
+    })
+
+    local TopBar = utility:Create("ImageLabel", {
+        Name = "TopBar",
+        Parent = Main,
+        BackgroundTransparency = 1,
+        ClipsDescendants = true,
+        Size = UDim2.new(1, 0, 0, 38),
+        ZIndex = 5,
+        Image = "rbxassetid://4595286933",
+        ImageColor3 = themes.Accent,
+        ScaleType = Enum.ScaleType.Slice,
+        SliceCenter = Rect.new(4, 4, 296, 296)
+    })
+
+    local TitleLabel = utility:Create("TextLabel", {
+        Name = "Title",
+        Parent = TopBar,
+        AnchorPoint = Vector2.new(0, 0.5),
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 12, 0, 19),
+        Size = UDim2.new(1, -100, 0, 16),
+        ZIndex = 5,
+        Font = Enum.Font.GothamBold,
+        Text = title,
+        TextColor3 = themes.TextColor,
+        TextSize = 14,
+        TextXAlignment = Enum.TextXAlignment.Left
+    })
+
+    -- Added Windows Style Close Button (X)
+    local CloseBtn = utility:Create("TextButton", {
+        Name = "CloseBtn",
+        Parent = TopBar,
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(1, -35, 0, 4),
+        BackgroundTransparency = 1,
+        ZIndex = 6,
+        Text = "×",
+        TextColor3 = Color3.fromRGB(255, 75, 75),
+        TextSize = 24,
+        Font = Enum.Font.GothamBold
+    })
+
+    -- Added Windows Style Minimize Button (-)
+    local MinimizeBtn = utility:Create("TextButton", {
+        Name = "MinimizeBtn",
+        Parent = TopBar,
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(1, -65, 0, 4),
+        BackgroundTransparency = 1,
+        ZIndex = 6,
+        Text = "−",
+        TextColor3 = Color3.fromRGB(200, 200, 200),
+        TextSize = 20,
+        Font = Enum.Font.GothamBold
+    })
+
+    -- Wire UI Control Actions
+    local self_obj = setmetatable({
+        container = container,
+        Main = Main,
+        toggling = false,
+        position = nil
+    }, library)
+
+    CloseBtn.MouseButton1Click:Connect(function()
+        container:Destroy()
+    end)
+
+    local minimized = false
+    MinimizeBtn.MouseButton1Click:Connect(function()
+        minimized = not minimized
+        if minimized then
+            -- Smooth minimize animation scale collapsing downward
+            Main.ClipsDescendants = true
+            utility:Tween(Main, {Size = UDim2.new(0, 511, 0, 38)}, 0.2)
+        else
+            utility:Tween(Main, {Size = UDim2.new(0, 511, 0, 428)}, 0.2)
+            wait(0.2)
+            Main.ClipsDescendants = false
+        end
+    end)
+
+    utility:InitializeKeybind()
+    utility:DraggingEnabled(TopBar, Main) -- Works flawlessly on Mobile touch movements now
+
+    return self_obj
+end
+
+-- Spawn a minimal blank test environment matching your request
+local venyx = library.new("HAPPYY SCRIPT")
